@@ -1,0 +1,47 @@
+Complexity Analysis — Milestone 1
+This report discusses the time complexity of the core operations required for this milestone: reservation insertion, reservation removal, waiting-list processing, and undo cancellation. Let **n** be the number of active reservations, and **k** be the number of students on a given resource waiting list.
+
+## 1. Reservation Insertion — O(1)
+LinkedList<Reservation>::insert()` (used by ReservationManager::createReservation`) adds the new reservation at the **tail** of the linked list. Because the list keeps a `tail` pointer always, no traversal is required. We simply attach the new node after the current tail and update the pointer.
+**Overall complexity: O(1).**
+
+## 2. Reservation Removal (Cancellation) — O(n)
+LinkedList<Reservation>::remove()` (used by ReservationManager::cancelReservation`) must find the node whose `reservationID` matches the one being cancelled. Since this is a **singly linked list with no index**, the only way to locate the target node is to walk the list from `head`, comparing each node's ID. In the worst case (the reservation is the last node, or does not exist), this requires visiting all **n** nodes. Once the node is found, unlinking it (updating the previous node's `next` pointer) is O(1).
+**Overall complexity: O(n)** — dominated by the search, not the unlink.
+
+## 3. Waiting-List Processing — O(1) per operation
+Waiting lists are implemented as a custom `Queue<WaitingRequest>` (one queue per resource, held in `WaitingList`'s internal map). A queue keeps both a `front` and `rear` pointer:
+This is exactly why a queue (rather than, say, a vector with front-removal) is the right structure here: enforcing **First-Come, First-Served** order costs only constant time per request, regardless of how many students are already waiting.
+**Overall complexity: O(1) per enqueue or dequeue.**
+(Locating *which* resource's queue to use is an O(log k) `std::map` lookup by resource ID, where k is the number of distinct resources with waiting lists — a small, separate cost from the queue operation itself.)
+
+## 4. Undo Cancellation — O(1)
+The cancellation history is a custom `Stack<Reservation>` with a
+single `top` pointer:
+
+- **Push (recording a cancellation)**: create a new node, point it at
+  the current `top`, update `top`. **O(1)**.
+- **Pop (undo)**: read `top`, advance `top` to `top->next`. **O(1)**.
+
+This matches the requirement that only the **most recently cancelled** reservation can be restored a stack's Last-In-First-Out order gives us that behavior for free, in constant time, without needing to search for "the most recent" item the way a list or queue would.
+After the pop, restoring the reservation involves one
+`LinkedList::insert()` call (O(1), tail insertion) plus a resource
+lookup (O(m) linear scan, same caveat as in section 1).
+**Overall complexity: O(1)** for the stack operation itself.
+
+
+
+
+
+
+
+
+Summary Table
+| Operation                          | Data Structure | Complexity |
+|-------------------------------------|-----------------|------------|
+| Insert reservation   | Linked List  |  O(1)  |
+| Remove/cancel reservation  | Linked List | O(n)   |
+| Add student to waiting list  | Queue  | O(1)  |
+| Remove student from waiting list   | Queue   | O(1)  |
+| Push cancellation to history    | Stack   | O(1)   |
+| Undo (pop) cancellation    | Stack    | O(1)   |
