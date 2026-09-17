@@ -8,7 +8,7 @@
 ReservationManager::ReservationManager() : nextReservationID(301) {}
 
 // ---------------------------------------------------------------
-// Resource Management
+// Resource Management - EMMANUEL FAKUNLE
 // ---------------------------------------------------------------
 
 // Loads resources from a pipe-delimited file:
@@ -107,7 +107,7 @@ Resource* ReservationManager::findResource(const std::string& resourceID) {
 }
 
 // ---------------------------------------------------------------
-// Reservation Management
+// Reservation Management - EMMANUEL FAKUNLE
 // ---------------------------------------------------------------
 
 // Loads pre-existing reservation records from a pipe-delimited file:
@@ -298,7 +298,7 @@ void ReservationManager::displayActiveReservations() const {
 }
 
 // ---------------------------------------------------------------
-// Waiting List Management
+// Waiting List Management - ANDREW CAMARGO
 // ---------------------------------------------------------------
 
 void ReservationManager::displayWaitingLists() const {
@@ -309,7 +309,7 @@ void ReservationManager::displayWaitingLists() const {
 }
 
 // ---------------------------------------------------------------
-// Cancellation History (Undo)
+// Cancellation History (Undo) - ANDREW CAMARGO
 // ---------------------------------------------------------------
 
 bool ReservationManager::undoCancellation() {
