@@ -30,18 +30,13 @@ lookup (O(m) linear scan, same caveat as in section 1).
 **Overall complexity: O(1)** for the stack operation itself.
 
 
-
-
-
-
-
-
 Summary Table
 | Operation                          | Data Structure | Complexity |
 |-------------------------------------|-----------------|------------|
 | Insert reservation   | Linked List  |  O(1)  |
-| Remove/cancel reservation  | Linked List | O(n)   |
-| Add student to waiting list  | Queue  | O(1)  |
-| Remove student from waiting list   | Queue   | O(1)  |
-| Push cancellation to history    | Stack   | O(1)   |
-| Undo (pop) cancellation    | Stack    | O(1)   |
+| Remove/cancel reservation  | Linked List | O(n) |
+| Add student to waiting list  | Queue | O(1) |
+| Remove student from waiting list  | Queue   | O(1) |
+| Push cancellation to history  | Stack   | O(1) |
+| Undo (pop) cancellation  | Stack | O(1)  |
+
