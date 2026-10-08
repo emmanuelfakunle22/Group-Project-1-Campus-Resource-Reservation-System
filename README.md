@@ -25,11 +25,23 @@ The team members are Emmanuel Fakunle (Team Leader), Andrew Camargo, and Jacob B
 
 ## Building
 
-From the `Project1/` directory:
+Windows (MinGW g++, e.g. via MSYS2)
 
-```bash
-g++ -std=c++17 -Wall -Iinclude src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp -o campus_reservation_system
-```
+cd Project1
+g++ -std=c++17 -Iinclude -o campus_reservation_system.exe src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp
+campus_reservation_system.exe
+
+Windows (Visual Studio Developer Command Prompt)
+
+cd Project1
+cl /EHsc /std:c++17 /Iinclude src\main.cpp src\Resource.cpp src\Reservation.cpp src\ReservationManager.cpp /Fe:campus_reservation_system.exe
+campus_reservation_system.exe
+
+macOS / Linux
+
+cd Project1
+g++ -std=c++17 -Iinclude -o campus_reservation_system src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp
+./campus_reservation_system
 
 ## Running
 
