@@ -23,7 +23,7 @@ The team members are Emmanuel Fakunle (Team Leader), Andrew Camargo, and Jacob B
   managed by the `CancellationHistory` class. Only the most recently
   cancelled reservation can be restored. - JACOB BEARD
 
-## Building
+## Running
 
 Windows (MinGW g++, e.g. via MSYS2)
 
@@ -42,8 +42,6 @@ macOS / Linux
 cd Project1
 g++ -std=c++17 -Iinclude -o campus_reservation_system src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp
 ./campus_reservation_system
-
-## Running
 
 Run the program **from the `Project1/` directory** so that it can find
 `data/resources.txt` and `data/reservations.txt` (the program loads these relative paths on startup):
