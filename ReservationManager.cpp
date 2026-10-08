@@ -319,21 +319,36 @@ bool ReservationManager::undoCancellation() {
         return false;
     }
 
-    // Put the reservation back into the active list.
-    activeReservations.insert(restored);
-
-    // Mark the resource unavailable again, if it exists.
     Resource* resource = findResource(restored.getResourceID());
-    if (resource != nullptr) {
-        resource->setAvailable(false);
+    if (resource == nullptr) {
+        std::cout << "Cannot undo: resource '" << restored.getResourceID()
+                  << "' no longer exists.\n";
+        return false;
     }
+
+    // Resource was reassigned (auto-assigned from the waiting list or
+    // booked directly) since the cancellation. Restoring would double-book it.
+    if (!resource->isAvailable()) {
+        std::cout << "Cannot undo: resource '" << restored.getResourceID()
+                  << "' has since been reserved by another student.\n";
+        std::cout << "The cancelled reservation (Res#" << restored.getReservationID()
+                  << ") has been discarded from history.\n";
+        return false;
+    }
+
+    // Guard against the same student having re-booked this resource.
+    // (Unreachable if the availability check passes, since a held resource
+    // is unavailable, but cheap insurance if data was preloaded inconsistently.)
+    if (hasDuplicateReservation(restored.getStudentID(), restored.getResourceID())) {
+        std::cout << "Cannot undo: student #" << restored.getStudentID()
+                  << " already has an active reservation for this resource.\n";
+        return false;
+    }
+
+    activeReservations.insert(restored);
+    resource->setAvailable(false);
 
     std::cout << "Reservation Restored Successfully.\n";
     restored.display();
     return true;
-}
-
-void ReservationManager::displayCancellationHistory() const {
-    std::cout << "Cancellation History (most recent first):\n";
-    cancellationHistory.display();
 }
