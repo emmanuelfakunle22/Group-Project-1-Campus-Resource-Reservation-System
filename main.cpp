@@ -41,7 +41,10 @@ void printMenu() {
     std::cout << "6. View Waiting Lists\n";
     std::cout << "7. Undo Last Cancellation\n";
     std::cout << "8. View Cancellation History\n";
-    std::cout << "9. Exit\n";
+    std::cout << "9. Search Resource by ID\n";
+    std::cout << "10. Search Reservation by ID\n";
+    std::cout << "11. Search Reservations by Student ID:\n";
+    std::cout << "12. Exit\n";
 }
 
 int main() {
@@ -139,12 +142,28 @@ int main() {
                 break;
             }
             case 9: {
+                std::cout << "\n--- Search Resource ---\n";
+                manager.searchResourceByID(readLine("Resource ID: "));
+                break;
+            }
+            case 10: {
+                std::cout << "\n--- Search Reservation ---\n";
+                manager.searchReservationByID(readInt("Reservation ID: "));
+                break;
+            }
+            case 11: {
+                std::cout << "\n--- Search by Student ---\n";
+                manager.searchReservationsByStudent(readInt("Student ID: "));
+                break;
+            }
+            case 12: {
                 std::cout << "Goodbye!\n";
                 running = false;
                 break;
             }
+            }
             default: {
-                std::cout << "Invalid choice. Please enter a number between 1 and 9.\n";
+                std::cout << "Invalid choice. Please enter a number between 1 and 12.\n";
                 break;
             }
         }

@@ -296,10 +296,66 @@ void ReservationManager::displayActiveReservations() const {
     std::cout << "Active Reservations (" << activeReservations.size() << " total):\n";
     activeReservations.display();
 }
+// ---------------------------------------------------------------
+// Searching (Linear Search) - ANDREW CAMARGO
+// ---------------------------------------------------------------
+
+    void searchResourceByID(const std::string& resourceID) const;
+    void searchReservationByID(int reservationID) const;
+    void searchReservationsByStudent(int studentID) const;
 
 // ---------------------------------------------------------------
 // Waiting List Management - ANDREW CAMARGO
 // ---------------------------------------------------------------
+
+void ReservationManager::searchResourceByID(const std::string& resourceID) const {
+    for (const auto& r : resources) {
+        if (r.getID() == resourceID) {
+            std::cout << "Resource found:\n";
+            std::cout << std::left
+                      << std::setw(8)  << "ID"
+                      << std::setw(20) << "Name"
+                      << std::setw(22) << "Type"
+                      << "Status" << "\n";
+            std::cout << std::string(60, '-') << "\n";
+            r.display();
+            return;
+        }
+    }
+    std::cout << "No resource found with ID '" << resourceID << "'.\n";
+}
+
+// Linear search over the active-reservations linked list. O(n).
+void ReservationManager::searchReservationByID(int reservationID) const {
+    Reservation found;
+    bool ok = activeReservations.find(
+        [reservationID](const Reservation& r) { return r.getReservationID() == reservationID; },
+        found);
+
+    if (ok) {
+        std::cout << "Reservation found:\n";
+        found.display();
+    } else {
+        std::cout << "No active reservation found with ID " << reservationID << ".\n";
+    }
+}
+
+// Linear search that collects ALL matches (full traversal). O(n).
+void ReservationManager::searchReservationsByStudent(int studentID) const {
+    int count = 0;
+    activeReservations.forEach([&](const Reservation& r) {
+        if (r.getStudentID() == studentID) {
+            if (count == 0) {
+                std::cout << "Reservations for Student #" << studentID << ":\n";
+            }
+            r.display();
+            count++;
+        }
+    });
+    if (count == 0) {
+        std::cout << "No active reservations found for Student #" << studentID << ".\n";
+    }
+}
 
 void ReservationManager::displayWaitingLists() const {
     // WaitingList's internal map is not const-iterable through this
