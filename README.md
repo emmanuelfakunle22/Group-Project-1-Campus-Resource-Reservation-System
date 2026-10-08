@@ -52,7 +52,10 @@ You'll see a menu:
 6. View Waiting Lists
 7. Undo Last Cancellation
 8. View Cancellation History
-9. Exit
+9. Serach Resource by ID
+10. Search Reseration by ID
+11. Search Reservation by Student ID
+12. Exit
 Enter Choice:
 ```
 
@@ -74,5 +77,6 @@ ReservationID|StudentID|StudentName|ResourceID|Date
 - [x] Invalid reservation IDs on cancellation
 - [x] Empty cancellation-history stack (undo with nothing to undo)
 - [x] Empty waiting-list queues (display, or removing from an empty list)
+- [x] Searching for a resource, reservation, or student that does not exist
 
 See `COMPLEXITY_ANALYSIS.md` for the Big-O. - JACOB BEARD

@@ -29,14 +29,31 @@ After the pop, restoring the reservation involves one
 lookup (O(m) linear scan, same caveat as in section 1).
 **Overall complexity: O(1)** for the stack operation itself.
 
+## 5. Searching — Linear Search
+
+Let "m" be the number of resources and **n** be the number of active reservations.
+
+All searches use linear search, implemented with hand-written loops. No standard library search functions (`std::find`, `std::find_if`, `std::binary_search`, etc.) are used.
+
+- Search resource by ID (`searchResourceByID`): a `for` loop over the `std::vector<Resource>` compares each `getID()` to the target and stops at the first match. Best case O(1), worst case O(m) (the resource is last or does not exist).
+- Search reservation by ID (`searchReservationByID`): uses `LinkedList::find()`, a `while` loop that walks from `head` and stops at the first node whose `reservationID` matches. Best case O(1), worst case O(n).
+- Search reservations by student ID (`searchReservationsByStudent`): uses `LinkedList::forEach()` to visit every node, because one student can have several reservations. This always scans the full list, so it is O(n) in the best, average and worst cases.
+
+Extra space is O(1) for all three searches.
+
+Why linear search and not binary search? Binary search requires sorted data and O(1) random access. The active reservations are stored in a singly linked list, so reaching the middle element already takes O(n), and the list is kept in insertion order rather than sorted. Linear search is the appropriate choice for this data structure.
 
 Summary Table
-| Operation                          | Data Structure | Complexity |
-|-------------------------------------|-----------------|------------|
-| Insert reservation   | Linked List  |  O(1)  |
-| Remove/cancel reservation  | Linked List | O(n) |
-| Add student to waiting list  | Queue | O(1) |
-| Remove student from waiting list  | Queue   | O(1) |
-| Push cancellation to history  | Stack   | O(1) |
-| Undo (pop) cancellation  | Stack | O(1)  |
+| Operation                          | Data Structure 	| Complexity |
+|------------------------------------|------------------|------------|
+| Insert reservation   			| Linked List  	| O(1)  |
+| Remove/cancel reservation  		| Linked List 	| O(n) |
+| Add student to waiting list  		| Queue 	| O(1) |
+| Remove student from waiting list  	| Queue   	| O(1) |
+| Push cancellation to history  	| Stack   	| O(1) |
+| Undo (pop) cancellation  		| Stack 	| O(1)  |
+| Search resource by ID  		| Vector 	| O(m) |
+| Search reservation by ID  		| Linked List 	| O(n) |
+| Search reservations by student  	| Linked List 	| O(n) |
+
 
