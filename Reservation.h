@@ -1,7 +1,7 @@
 #ifndef RESERVATION_H
 #define RESERVATION_H
-
 #include <string>
+#include "Student.h"
 
 // Represents a single active (or historical) reservation record.
 class Reservation {
@@ -23,6 +23,13 @@ public:
     std::string getStudentName() const;
     std::string getResourceID() const;
     std::string getDate() const;
+
+    // Returns the reserving student as a Student object.
+    Student getStudent() const;
+
+    // Returns the date as YYYYMMDD so dates compare correctly as strings
+    // (MM/DD/YYYY would sort by month first, which is wrong across years).
+    std::string getSortableDate() const;
 
     // Prints a single formatted line describing this reservation.
     void display() const;
