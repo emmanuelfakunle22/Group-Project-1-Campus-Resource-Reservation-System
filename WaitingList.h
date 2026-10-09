@@ -14,8 +14,11 @@ private:
 
 public:
     // Add a student to the back of the queue for a given resource. O(1).
-    void addRequest(const std::string& resourceID, int studentID, const std::string& studentName) {
-        WaitingRequest request(studentID, studentName, resourceID);
+    // FIX: now also records the date the student requested, so it isn't
+    // lost once the request sits on the waiting list.
+    void addRequest(const std::string& resourceID, int studentID,
+                    const std::string& studentName, const std::string& date) {
+        WaitingRequest request(studentID, studentName, resourceID, date);
         queues[resourceID].enqueue(request);
     }
 
@@ -28,20 +31,22 @@ public:
         return it->second.dequeue(result);
     }
 
-    bool isEmpty(const std::string& resourceID) {
+    // FIX: marked const (std::map::find has a const overload), so callers
+    // no longer need a const_cast just to check/display the waiting list.
+    bool isEmpty(const std::string& resourceID) const {
         auto it = queues.find(resourceID);
         if (it == queues.end()) return true;
         return it->second.isEmpty();
     }
 
-    int waitingCount(const std::string& resourceID) {
+    int waitingCount(const std::string& resourceID) const {
         auto it = queues.find(resourceID);
         if (it == queues.end()) return 0;
         return it->second.size();
     }
 
     // Display the waiting list for a single resource.
-    void display(const std::string& resourceID) {
+    void display(const std::string& resourceID) const {
         auto it = queues.find(resourceID);
         if (it == queues.end() || it->second.isEmpty()) {
             std::cout << "  No students waiting for resource " << resourceID << ".\n";
@@ -51,9 +56,9 @@ public:
     }
 
     // Display every non-empty waiting list.
-    void displayAll() {
+    void displayAll() const {
         bool any = false;
-        for (auto& entry : queues) {
+        for (const auto& entry : queues) {
             if (!entry.second.isEmpty()) {
                 any = true;
                 std::cout << "Waiting list for resource " << entry.first << ":\n";
