@@ -3,7 +3,7 @@
 This project is from class CSCE 2110 Foundations of Data Structures. 
 The team members are Emmanuel Fakunle (Team Leader), Andrew Camargo, and Jacob Beard.
 
-# Campus Resource Reservation System — Milestone 1
+Menu-driven C++17 program for reserving campus resources (study rooms, laptops, tutoring, lab gear).
 
 ## Features implemented in this milestone
 
@@ -83,6 +83,24 @@ active reservations):
 ```
 ReservationID|StudentID|StudentName|ResourceID|Date
 ```
+## Classes
+| Class | Role |
+|---|---|
+| Resource, Reservation, Student | Data objects |
+| ReservationManager | Owns all data, performs reserve / cancel / undo / search / sort |
+| WaitingList, WaitingRequest | One FIFO queue of waiting students per resource |
+| CancellationHistory | Stack of cancelled reservations (undo) |
+| ReportGenerator | Read-only; builds the four system reports |
+
+## Data structures (hand-written, DataStructures.h)
+LinkedList (active reservations), Queue (waiting lists), Stack (cancellation history), std::vector (resource inventory).
+
+## Algorithms (Algorithms.h)
+- Linear search: resources by ID, reservations by reservation ID or student ID.
+- Merge sort (stable, O(n log n)): resources by name/type; reservations by ID/student name/resource ID/date; all report tables.
+
+## Reports (menu 13)
+Active reservations, resource utilization, most requested resources, waiting-list statistics.
 ## Error handling checklist
 
 - [x] Invalid/out-of-range menu selections
@@ -92,5 +110,6 @@ ReservationID|StudentID|StudentName|ResourceID|Date
 - [x] Empty cancellation-history stack (undo with nothing to undo)
 - [x] Empty waiting-list queues (display, or removing from an empty list)
 - [x] Searching for a resource, reservation, or student that does not exist
+- [x] Non-numeric menu input, missing data files, unknown resource IDs, invalid dates, duplicate bookings by the same student, empty queue/stack (nothing to undo), and undo blocked when the resource was re-booked.
 
 See `COMPLEXITY_ANALYSIS.md` for the Big-O. - JACOB BEARD
