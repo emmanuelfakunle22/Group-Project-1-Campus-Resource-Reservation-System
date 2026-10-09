@@ -31,3 +31,4 @@ public:
 };
 
 #endif // CANCELLATIONHISTORY_H
+
