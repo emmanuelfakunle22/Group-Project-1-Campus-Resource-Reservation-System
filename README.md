@@ -27,27 +27,39 @@ Menu-driven C++17 program for reserving campus resources (study rooms, laptops, 
 - **Reporting System - EMMANUEL FAKUNLE
 
 ## Running
+Start by opening a terminal in the Project1 folder. Then compile and run it with the commands for your setup below.
 
-Windows (MinGW g++, e.g. via MSYS2)
+Windows, Developer Command Prompt for Visual Studio
 
-cd Project1
-g++ -std=c++17 -Iinclude -o campus_reservation_system.exe src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp
+cl /std:c++17 /EHsc /Iinclude /Fe:campus_reservation_system.exe src\main.cpp src\Resource.cpp src\Reservation.cpp src\Student.cpp src\ReservationManager.cpp src\ReportGenerator.cpp
 campus_reservation_system.exe
 
-Windows (Visual Studio Developer Command Prompt)
+Windows, regular Command Prompt or PowerShell with g++ (MinGW/MSYS2)
 
-cd Project1
-cl /EHsc /std:c++17 /Iinclude src\main.cpp src\Resource.cpp src\Reservation.cpp src\ReservationManager.cpp /Fe:campus_reservation_system.exe
-campus_reservation_system.exe
+g++ -std=c++17 -Iinclude -o campus_reservation_system.exe src\main.cpp src\Resource.cpp src\Reservation.cpp src\Student.cpp src\ReservationManager.cpp src\ReportGenerator.cpp
+.\campus_reservation_system.exe
 
-macOS / Linux
+In Command Prompt, drop the .\ and just type campus_reservation_system.exe.
 
-cd Project1
-g++ -std=c++17 -Iinclude -o campus_reservation_system src/main.cpp src/Resource.cpp src/Reservation.cpp src/ReservationManager.cpp
+Mac
+
+g++ -std=c++17 -Iinclude -o campus_reservation_system src/*.cpp
 ./campus_reservation_system
 
-Run the program **from the `Project1/` directory** so that it can find
-`data/resources.txt` and `data/reservations.txt` (the program loads these relative paths on startup):
+If g++ isn’t found, run xcode-select --install first. On a Mac, g++ is really Apple’s clang, which works fine.
+
+Linux
+
+g++ -std=c++17 -Iinclude -o campus_reservation_system src/*.cpp
+./campus_reservation_system
+
+If g++ is missing, install it with sudo apt install g++.
+
+Common problems
+
+“Could not open file”: you’re not in the Project1 folder, so the program can’t find data/.
+“undefined reference” or “unresolved external”: a .cpp file is missing from the command. All six are needed, or src/*.cpp on Mac/Linux.
+Command not found: that compiler isn’t installed. Use the Developer Command Prompt for cl, or install MSYS2 for g++.
 
 ```bash
 ./campus_reservation_system
