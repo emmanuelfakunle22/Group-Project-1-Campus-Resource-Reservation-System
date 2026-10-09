@@ -1,12 +1,12 @@
 #ifndef RESERVATIONMANAGER_H
 #define RESERVATIONMANAGER_H
-
 #include <string>
 #include <vector>
 #include <map>
 #include "DataStructures.h"
 #include "Resource.h"
 #include "Reservation.h"
+#include "Student.h"
 #include "WaitingList.h"
 #include "CancellationHistory.h"
 
@@ -72,7 +72,7 @@ public:
     //   - date must be a valid MM/DD/YYYY date     -> INVALID_DATE
     //   - the same student must not already have
     //     an active reservation for this resource  -> DUPLICATE_REQUEST
-    CreateResult createReservation(int studentID, const std::string& studentName,
+    CreateResult createReservation(const Student& student,
                                     const std::string& resourceID, const std::string& date);
 
     // Returns true if 'date' is a real calendar date in MM/DD/YYYY format
@@ -105,13 +105,23 @@ public:
     bool undoCancellation();
     void displayCancellationHistory() const;
 
-    // ---------------- Reporting ----------------
-    // Prints the four required system reports: active reservations,
-    // resource utilization (reservation count per resource, every
-    // resource included), most requested resources (ranked, merge
-    // sort), and waiting-list statistics (students waiting per
-    // resource, plus a system-wide total).
-    void generateReport() const;
+    // ---------------- Sorting ----------------
+    // Which field to sort reservations by.
+    enum class ReservationSortKey { RESERVATION_ID, STUDENT_NAME, RESOURCE_ID, DATE };
+
+    // Merge-sorts a COPY of the active reservations and prints it (the
+    // linked list itself keeps its insertion order).
+    void sortAndDisplayReservations(ReservationSortKey key) const;
+
+    // ---------------- Read-only accessors (used by ReportGenerator) ----------------
+    const std::vector<Resource>& getResources() const { return resources; }
+    const WaitingList& getWaitingList() const { return waitingList; }
+    const std::map<std::string, int>& getReservationFrequency() const { return reservationFrequency; }
+    int getActiveReservationCount() const { return activeReservations.size(); }
+
+    // Copies the active reservations from the linked list into a vector
+    // so they can be sorted without touching the list.
+    std::vector<Reservation> getActiveReservationsSnapshot() const;
 };
 
 #endif // RESERVATIONMANAGER_H
