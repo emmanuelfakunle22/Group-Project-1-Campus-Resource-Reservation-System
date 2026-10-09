@@ -144,10 +144,11 @@ public:
     }
 };
 
+// ---------------------------------------------------------------
 // Queue<T> - FIFO queue implemented with a singly linked list.
 // Used for waiting lists so requests are served in the order
 // they arrived (First Come, First Served).
-
+// ---------------------------------------------------------------
 template <typename T>
 class Queue {
 private:
@@ -229,10 +230,11 @@ public:
     }
 };
 
+// ---------------------------------------------------------------
 // Stack<T> - LIFO stack implemented with a singly linked list.
 // Used for cancellation history so the most recently cancelled
 // reservation is the first one that can be restored (undo).
-
+// ---------------------------------------------------------------
 template <typename T>
 class Stack {
 private:
