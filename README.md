@@ -68,8 +68,9 @@ You'll see a menu:
 9. Search Resources
 10. Search Reservations
 11. Sort Resources
-12. Generate Report
-13. Exit
+12. Sort Reservations
+13. Generate Report
+14. Exit
 Enter Choice:
 ```
 
