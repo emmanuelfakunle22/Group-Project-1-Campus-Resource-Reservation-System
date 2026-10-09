@@ -22,6 +22,9 @@ The team members are Emmanuel Fakunle (Team Leader), Andrew Camargo, and Jacob B
 - **Cancellation history / undo**: a custom `Stack<Reservation>`,
   managed by the `CancellationHistory` class. Only the most recently
   cancelled reservation can be restored. - JACOB BEARD
+- **Searching Algorithm - ANDREW CAMARGO
+- **Sorting Algorithm - JACOB BEARD
+- **Reporting System - EMMANUEL FAKUNLE
 
 ## Running
 
