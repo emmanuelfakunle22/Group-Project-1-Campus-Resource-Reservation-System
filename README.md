@@ -1,4 +1,4 @@
-[README.MD](https://github.com/user-attachments/files/32312244/README.MD)
+
 # Group-Project-1-Campus-Resource-Reservation-System
 This project is from class CSCE 2110 Foundations of Data Structures. 
 The team members are Emmanuel Fakunle (Team Leader), Andrew Camargo, and Jacob Beard.
