@@ -277,9 +277,11 @@ bool ReservationManager::hasDuplicateReservation(int studentID, const std::strin
         dummy);
 }
 
-CreateResult ReservationManager::createReservation(int studentID, const std::string& studentName,
+CreateResult ReservationManager::createReservation(const Student& student,
                                                      const std::string& resourceID,
                                                      const std::string& date) {
+    int studentID = student.getID();                 // unpack for the helpers below
+    const std::string& studentName = student.getName();
     Resource* resource = findResource(resourceID);
     if (resource == nullptr) {
         return CreateResult::INVALID_RESOURCE;
@@ -419,6 +421,16 @@ bool ReservationManager::undoCancellation() {
         return false;
     }
 
+    // Guard: if someone else has since booked this resource, restoring
+    // would double-book it. Put the record back on the stack and refuse.
+    Resource* current = findResource(restored.getResourceID());
+    if (current != nullptr && !current->isAvailable()) {
+        cancellationHistory.recordCancellation(restored);
+        std::cout << "Cannot undo: resource " << restored.getResourceID()
+                  << " has been re-booked since this cancellation.\n";
+        return false;
+    }
+
     // Put the reservation back into the active list.
     activeReservations.insert(restored);
     reservationFrequency[restored.getResourceID()]++;
@@ -440,90 +452,29 @@ void ReservationManager::displayCancellationHistory() const {
 }
 
 // ---------------------------------------------------------------
-// Reporting
+// Sorting reservations
 // ---------------------------------------------------------------
 
-// Generates the four required system reports, each built directly from
-// the data this system already maintains (no re-reading files, no
-// separate bookkeeping):
-//   1. Active Reservations     - from the activeReservations linked list
-//   2. Resource Utilization    - every resource in inventory, paired
-//                                 with its reservation count from
-//                                 reservationFrequency (0 if never
-//                                 reserved, so nothing in the inventory
-//                                 is left out)
-//   3. Most Requested Resources - the same reservationFrequency data,
-//                                 ranked descending with merge sort
-//   4. Waiting-List Statistics  - every resource's current waiting
-//                                 count from the WaitingList (FIFO
-//                                 queues), plus a system-wide total
-void ReservationManager::generateReport() const {
-    std::cout << "\n================ SYSTEM REPORT ================\n";
+std::vector<Reservation> ReservationManager::getActiveReservationsSnapshot() const {
+    std::vector<Reservation> snapshot;
+    activeReservations.forEach([&](const Reservation& r) { snapshot.push_back(r); });
+    return snapshot;
+}
 
-    // --- 1. Active Reservations ---
-    std::cout << "-- Active Reservations --\n";
-    std::cout << "There are currently " << activeReservations.size()
-              << " active reservation(s).\n";
-
-    // --- 2. Resource Utilization ---
-    std::cout << "\n-- Resource Utilization --\n";
-    if (resources.empty()) {
-        std::cout << "No resources loaded.\n";
-    } else {
-        std::cout << std::left << std::setw(8) << "ID" << std::setw(22) << "Name"
-                  << "Reservations\n";
-        std::cout << std::string(45, '-') << "\n";
-        for (const auto& r : resources) {
-            auto it = reservationFrequency.find(r.getID());
-            int count = (it != reservationFrequency.end()) ? it->second : 0;
-            std::cout << std::left << std::setw(8) << r.getID()
-                      << std::setw(22) << r.getName() << count << "\n";
-        }
+// Sorts a copy of the active reservations with merge sort by the chosen key.
+void ReservationManager::sortAndDisplayReservations(ReservationSortKey key) const {
+    std::vector<Reservation> list = getActiveReservationsSnapshot();
+    if (list.empty()) {
+        std::cout << "No active reservations to sort.\n";
+        return;
     }
-
-    // --- 3. Most Requested Resources ---
-    std::cout << "\n-- Most Requested Resources --\n";
-    if (reservationFrequency.empty()) {
-        std::cout << "No reservations have been made yet.\n";
-    } else {
-        // Copy into a vector so we can rank it with merge sort.
-        std::vector<std::pair<std::string, int>> entries(
-            reservationFrequency.begin(), reservationFrequency.end());
-
-        mergeSort(entries, [](const std::pair<std::string, int>& a,
-                               const std::pair<std::string, int>& b) {
-            return a.second > b.second; // descending by count
-        });
-
-        for (const auto& entry : entries) {
-            std::cout << "  " << std::left << std::setw(8) << entry.first
-                      << " - " << entry.second << " reservation(s)\n";
+    mergeSort(list, [key](const Reservation& a, const Reservation& b) {
+        switch (key) {
+            case ReservationSortKey::STUDENT_NAME: return a.getStudentName() < b.getStudentName();
+            case ReservationSortKey::RESOURCE_ID:  return a.getResourceID() < b.getResourceID();
+            case ReservationSortKey::DATE:         return a.getSortableDate() < b.getSortableDate();
+            default:                               return a.getReservationID() < b.getReservationID();
         }
-    }
-
-    // --- 4. Waiting-List Statistics ---
-    std::cout << "\n-- Waiting-List Statistics --\n";
-    if (resources.empty()) {
-        std::cout << "No resources loaded.\n";
-    } else {
-        bool anyWaiting = false;
-        int totalWaiting = 0;
-        std::cout << std::left << std::setw(8) << "ID" << "Students Waiting\n";
-        std::cout << std::string(30, '-') << "\n";
-        for (const auto& r : resources) {
-            int count = waitingList.waitingCount(r.getID());
-            if (count > 0) {
-                anyWaiting = true;
-                totalWaiting += count;
-                std::cout << std::left << std::setw(8) << r.getID() << count << "\n";
-            }
-        }
-        if (!anyWaiting) {
-            std::cout << "No students are currently on any waiting list.\n";
-        } else {
-            std::cout << "Total students waiting (all resources): " << totalWaiting << "\n";
-        }
-    }
-
-    std::cout << "=================================================\n";
+    });
+    for (const auto& r : list) r.display();
 }
