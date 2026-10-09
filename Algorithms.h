@@ -3,7 +3,6 @@
 
 #include <vector>
 
-// =====================================================================
 // Algorithms.h
 //
 // Standalone, reusable algorithm implementations satisfying the two
@@ -20,7 +19,7 @@
 // LINEAR SEARCH
 // Scans a vector from the front until predicate(items[i]) is true.
 // O(n) worst case. Returns the index of the first match, or -1.
-// ---------------------------------------------------------------------
+
 template <typename T, typename Predicate>
 int linearSearchIndex(const std::vector<T>& items, Predicate predicate) {
     for (int i = 0; i < static_cast<int>(items.size()); i++) {
@@ -31,11 +30,10 @@ int linearSearchIndex(const std::vector<T>& items, Predicate predicate) {
     return -1;
 }
 
-// ---------------------------------------------------------------------
 // MERGE SORT
 // Classic divide-and-conquer sort: O(n log n) worst case, stable.
 // "compare(a, b)" returns true if a should come before b.
-// ---------------------------------------------------------------------
+
 template <typename T, typename Compare>
 void mergeHelper(std::vector<T>& items, int left, int mid, int right,
                   Compare compare) {
@@ -45,10 +43,12 @@ void mergeHelper(std::vector<T>& items, int left, int mid, int right,
     int i = 0, j = 0, k = left;
     while (i < static_cast<int>(leftHalf.size()) &&
            j < static_cast<int>(rightHalf.size())) {
-        if (compare(leftHalf[i], rightHalf[j])) {
-            items[k++] = leftHalf[i++];
-        } else {
+        // Take from the right half only if it is strictly "before" the left
+        // item; on ties the left item goes first, which keeps the sort stable.
+        if (compare(rightHalf[j], leftHalf[i])) {
             items[k++] = rightHalf[j++];
+        } else {
+            items[k++] = leftHalf[i++];
         }
     }
     while (i < static_cast<int>(leftHalf.size())) items[k++] = leftHalf[i++];
