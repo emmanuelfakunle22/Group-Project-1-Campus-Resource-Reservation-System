@@ -3,7 +3,7 @@
 Start from the Project1 folder with a fresh run: `./campus_reservation_system` (Windows: `campus_reservation_system.exe`).
 Each line is what to type. Lines in *italics* are what to say. Do the steps in order; later steps depend on earlier ones.
 
-## 0. Intro (Emmanuel)
+## Intro (Emmanuel)
 *"Menu-driven reservation system in C++. Linked list for active reservations, queue for waiting lists, stack for cancellation history, vector for resources. Search and sort are our own algorithms."*
 - Point out: loads 20 resources and 20 reservations with no warnings.
 
