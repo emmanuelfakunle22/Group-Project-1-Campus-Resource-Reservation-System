@@ -2,6 +2,8 @@
 #include <limits>
 #include <string>
 #include "ReservationManager.h"
+#include "ReportGenerator.h"
+#include "Student.h"
 
 // ---------------------------------------------------------------
 // Helper: safely read an integer from std::cin, re-prompting on
@@ -44,8 +46,9 @@ void printMenu() {
     std::cout << "9. Search Resources\n";
     std::cout << "10. Search Reservations\n";
     std::cout << "11. Sort Resources\n";
-    std::cout << "12. Generate Report\n";
-    std::cout << "13. Exit\n";
+    std::cout << "12. Sort Reservations\n";
+    std::cout << "13. Generate Report\n";
+    std::cout << "14. Exit\n";
 }
 
 int main() {
@@ -81,16 +84,17 @@ int main() {
 
                 // Basic validation of the request before handing off
                 // to the manager.
+                Student student(studentID, studentName);   // bundle the input
                 if (studentID <= 0) {
                     std::cout << "ERROR: Student ID must be a positive number.\n";
                     break;
                 }
-                if (studentName.empty() || resourceID.empty() || date.empty()) {
+                if (!student.isValid() || resourceID.empty() || date.empty()) {
                     std::cout << "ERROR: Student name, resource ID, and date are all required.\n";
                     break;
                 }
 
-                CreateResult result = manager.createReservation(studentID, studentName, resourceID, date);
+                CreateResult result = manager.createReservation(student, resourceID, date);
                 switch (result) {
                     case CreateResult::INVALID_RESOURCE:
                         std::cout << "ERROR: No resource found with ID '" << resourceID << "'.\n";
@@ -179,16 +183,33 @@ int main() {
                 break;
             }
             case 12: {
-                manager.generateReport();
+                std::cout << "\n--- Sort Reservations ---\n";
+                std::cout << "Sort by (1) Reservation ID, (2) Student Name, (3) Resource ID, (4) Date: ";
+                int mode = readInt("");
+                if (mode < 1 || mode > 4) {
+                    std::cout << "ERROR: Invalid sort option.\n";
+                    break;
+                }
+                ReservationManager::ReservationSortKey keys[] = {
+                    ReservationManager::ReservationSortKey::RESERVATION_ID,
+                    ReservationManager::ReservationSortKey::STUDENT_NAME,
+                    ReservationManager::ReservationSortKey::RESOURCE_ID,
+                    ReservationManager::ReservationSortKey::DATE};
+                manager.sortAndDisplayReservations(keys[mode - 1]);
                 break;
             }
             case 13: {
+                ReportGenerator reporter(manager);   // read-only report builder
+                reporter.generateFullReport();
+                break;
+            }
+            case 14: {
                 std::cout << "Goodbye!\n";
                 running = false;
                 break;
             }
             default: {
-                std::cout << "Invalid choice. Please enter a number between 1 and 13.\n";
+                std::cout << "Invalid choice. Please enter a number between 1 and 14.\n";
                 break;
             }
         }
