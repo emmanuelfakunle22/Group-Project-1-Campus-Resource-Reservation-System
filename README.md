@@ -62,10 +62,11 @@ You'll see a menu:
 6. View Waiting Lists
 7. Undo Last Cancellation
 8. View Cancellation History
-9. Serach Resource by ID
-10. Search Reseration by ID
-11. Search Reservation by Student ID
-12. Exit
+9. Search Resources
+10. Search Reservations
+11. Sort Resources
+12. Generate Report
+13. Exit
 Enter Choice:
 ```
 
