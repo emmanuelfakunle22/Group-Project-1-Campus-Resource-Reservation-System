@@ -41,10 +41,11 @@ void printMenu() {
     std::cout << "6. View Waiting Lists\n";
     std::cout << "7. Undo Last Cancellation\n";
     std::cout << "8. View Cancellation History\n";
-    std::cout << "9. Search Resource by ID\n";
-    std::cout << "10. Search Reservation by ID\n";
-    std::cout << "11. Search Reservations by Student ID:\n";
-    std::cout << "12. Exit\n";
+    std::cout << "9. Search Resources\n";
+    std::cout << "10. Search Reservations\n";
+    std::cout << "11. Sort Resources\n";
+    std::cout << "12. Generate Report\n";
+    std::cout << "13. Exit\n";
 }
 
 int main() {
@@ -142,28 +143,52 @@ int main() {
                 break;
             }
             case 9: {
-                std::cout << "\n--- Search Resource ---\n";
-                manager.searchResourceByID(readLine("Resource ID: "));
+                std::cout << "\n--- Search Resources ---\n";
+                std::string resourceID = readLine("Resource ID: ");
+                manager.searchResourceByID(resourceID);
                 break;
             }
             case 10: {
-                std::cout << "\n--- Search Reservation ---\n";
-                manager.searchReservationByID(readInt("Reservation ID: "));
+                std::cout << "\n--- Search Reservations ---\n";
+                std::cout << "Search by (1) Reservation ID or (2) Student ID: ";
+                int mode = readInt("");
+                if (mode == 1) {
+                    int reservationID = readInt("Reservation ID: ");
+                    manager.searchReservationByID(reservationID);
+                } else if (mode == 2) {
+                    int studentID = readInt("Student ID: ");
+                    manager.searchReservationsByStudent(studentID);
+                } else {
+                    std::cout << "ERROR: Invalid search mode.\n";
+                }
                 break;
             }
             case 11: {
-                std::cout << "\n--- Search by Student ---\n";
-                manager.searchReservationsByStudent(readInt("Student ID: "));
+                std::cout << "\n--- Sort Resources ---\n";
+                std::cout << "Sort by (1) Name or (2) Type: ";
+                int mode = readInt("");
+                if (mode == 1) {
+                    manager.sortResourcesByName();
+                } else if (mode == 2) {
+                    manager.sortResourcesByType();
+                } else {
+                    std::cout << "ERROR: Invalid sort option.\n";
+                    break;
+                }
+                manager.displayResources();
                 break;
             }
             case 12: {
+                manager.generateReport();
+                break;
+            }
+            case 13: {
                 std::cout << "Goodbye!\n";
                 running = false;
                 break;
             }
-            }
             default: {
-                std::cout << "Invalid choice. Please enter a number between 1 and 12.\n";
+                std::cout << "Invalid choice. Please enter a number between 1 and 13.\n";
                 break;
             }
         }
