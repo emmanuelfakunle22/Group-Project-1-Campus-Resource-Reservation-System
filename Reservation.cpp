@@ -16,6 +16,14 @@ std::string Reservation::getStudentName() const { return studentName; }
 std::string Reservation::getResourceID() const { return resourceID; }
 std::string Reservation::getDate() const { return reservationDate; }
 
+Student Reservation::getStudent() const { return Student(studentID, studentName); }
+
+std::string Reservation::getSortableDate() const {
+    // Expects MM/DD/YYYY (validated before a reservation is created).
+    if (reservationDate.size() != 10) return reservationDate;   // fallback for odd data
+    return reservationDate.substr(6, 4) + reservationDate.substr(0, 2) + reservationDate.substr(3, 2);
+}
+
 void Reservation::display() const {
     std::cout << std::left
               << "Res#" << std::setw(6) << reservationID
