@@ -27,6 +27,8 @@ Menu-driven C++17 program for reserving campus resources (study rooms, laptops, 
 - **Reporting System - EMMANUEL FAKUNLE
 
 ## Running
+To run it:
+Unzip Project1.zip, then open a terminal in the Project1 folder. Don’t open it from inside src, because the program reads data/ relative to where you run it.
 Start by opening a terminal in the Project1 folder. Then compile and run it with the commands for your setup below.
 
 Windows, Developer Command Prompt for Visual Studio
