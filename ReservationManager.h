@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "DataStructures.h"
 #include "Resource.h"
 #include "Reservation.h"
@@ -20,16 +21,20 @@ enum class CreateResult {
 };
 
 // Central class that owns and coordinates all of the system's data:
-//   - resources          : std::vector<Resource>        (resource inventory)
-//   - activeReservations : LinkedList<Reservation>       (linked list)
-//   - waitingList         : WaitingList (queue per resource)
-//   - cancellationHistory : CancellationHistory (stack)
+//   - resources             : std::vector<Resource>        (resource inventory)
+//   - activeReservations    : LinkedList<Reservation>       (linked list)
+//   - waitingList           : WaitingList (queue per resource)
+//   - cancellationHistory   : CancellationHistory (stack)
+//   - reservationFrequency  : how many times each resource has ever been
+//                              reserved, used for the "most frequently
+//                              reserved resources" report
 class ReservationManager {
 private:
     std::vector<Resource> resources;
     LinkedList<Reservation> activeReservations;
     WaitingList waitingList;
     CancellationHistory cancellationHistory;
+    std::map<std::string, int> reservationFrequency;
     int nextReservationID;
 
 public:
@@ -39,16 +44,28 @@ public:
     bool loadResources(const std::string& filename);
     void displayResources() const;
     void displayResourceAvailability() const;
-    bool resourceExists(const std::string& resourceID) const;
     Resource* findResource(const std::string& resourceID);
+
+    // Linear search for a single resource by ID; prints the result
+    // (or a "not found" message) directly.
+    void searchResourceByID(const std::string& resourceID) const;
+
+    // Sorts the resource inventory in place using merge sort.
+    void sortResourcesByName();
+    void sortResourcesByType();
 
     // ---------------- Reservation Management ----------------
     // Optional preload of sample/historical reservation records.
+    // Also reconciles resource availability against what was loaded:
+    // any resource with at least one active reservation is forced
+    // Unavailable, and any resource with more than one active
+    // reservation loaded against it is reported as a data conflict.
     bool loadReservations(const std::string& filename);
 
     // Creates a reservation for the given student on the given resource.
     // Auto-assigns the reservation ID. If the resource is unavailable,
-    // the student is placed on that resource's waiting list instead.
+    // the student is placed on that resource's waiting list instead
+    // (along with the date they requested).
     //
     // Validation performed before any reservation/waitlist entry is made:
     //   - resource ID must exist                  -> INVALID_RESOURCE
@@ -70,14 +87,14 @@ public:
     // Cancels an existing reservation by ID. Returns false if not found.
     // On success: frees the resource, records the cancellation on the
     // history stack, and automatically assigns the resource to the next
-    // waiting student (if any) via the FIFO waiting queue.
+    // waiting student (if any) via the FIFO waiting queue, using THAT
+    // student's own requested date (not the cancelled reservation's).
     bool cancelReservation(int reservationID);
 
     bool reservationExists(int reservationID) const;
     void displayActiveReservations() const;
 
-    // ---------------- Searching (linear search) ----------------
-    void searchResourceByID(const std::string& resourceID) const;
+    // Linear search helpers exposed to the menu.
     void searchReservationByID(int reservationID) const;
     void searchReservationsByStudent(int studentID) const;
 
@@ -87,6 +104,14 @@ public:
     // ---------------- Cancellation History (Undo) ----------------
     bool undoCancellation();
     void displayCancellationHistory() const;
+
+    // ---------------- Reporting ----------------
+    // Prints the four required system reports: active reservations,
+    // resource utilization (reservation count per resource, every
+    // resource included), most requested resources (ranked, merge
+    // sort), and waiting-list statistics (students waiting per
+    // resource, plus a system-wide total).
+    void generateReport() const;
 };
 
 #endif // RESERVATIONMANAGER_H
