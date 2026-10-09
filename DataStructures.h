@@ -4,7 +4,6 @@
 #include <functional>
 #include <iostream>
 
-// =====================================================================
 // DataStructures.h
 //
 // Hand-written (non-STL-container) implementations of the three core
@@ -19,7 +18,6 @@
 //
 // See COMPLEXITY_ANALYSIS.md for a discussion of the time complexity
 // of each operation.
-// =====================================================================
 
 // ---------------------------------------------------------------
 // LinkedList<T> - singly linked list with head/tail pointers
@@ -43,6 +41,14 @@ public:
     ~LinkedList() {
         clear();
     }
+
+    // Copying would shallow-copy the internal Node pointers and lead to
+    // double-free/use-after-free when both copies are destroyed, so
+    // copying is disabled. Moving is still allowed.
+    LinkedList(const LinkedList&) = delete;
+    LinkedList& operator=(const LinkedList&) = delete;
+    LinkedList(LinkedList&&) = default;
+    LinkedList& operator=(LinkedList&&) = default;
 
     // Insert a new item at the tail of the list. O(1) because we keep
     // a tail pointer (no need to traverse the whole list).
@@ -138,11 +144,10 @@ public:
     }
 };
 
-// ---------------------------------------------------------------
 // Queue<T> - FIFO queue implemented with a singly linked list.
 // Used for waiting lists so requests are served in the order
 // they arrived (First Come, First Served).
-// ---------------------------------------------------------------
+
 template <typename T>
 class Queue {
 private:
@@ -159,6 +164,14 @@ private:
 public:
     Queue() : front_(nullptr), rear_(nullptr), count(0) {}
     ~Queue() { clear(); }
+
+    // Copying would shallow-copy the internal Node pointers (same hazard
+    // as LinkedList above), so copying is disabled. Moving is allowed,
+    // which is all std::map<std::string, Queue<T>> needs internally.
+    Queue(const Queue&) = delete;
+    Queue& operator=(const Queue&) = delete;
+    Queue(Queue&&) = default;
+    Queue& operator=(Queue&&) = default;
 
     // Add to the back of the queue. O(1).
     void enqueue(const T& item) {
@@ -216,11 +229,10 @@ public:
     }
 };
 
-// ---------------------------------------------------------------
 // Stack<T> - LIFO stack implemented with a singly linked list.
 // Used for cancellation history so the most recently cancelled
 // reservation is the first one that can be restored (undo).
-// ---------------------------------------------------------------
+
 template <typename T>
 class Stack {
 private:
@@ -236,6 +248,12 @@ private:
 public:
     Stack() : top_(nullptr), count(0) {}
     ~Stack() { clear(); }
+
+    // Same copy hazard as LinkedList/Queue above; disable copying.
+    Stack(const Stack&) = delete;
+    Stack& operator=(const Stack&) = delete;
+    Stack(Stack&&) = default;
+    Stack& operator=(Stack&&) = default;
 
     // Push an item onto the top of the stack. O(1).
     void push(const T& item) {
