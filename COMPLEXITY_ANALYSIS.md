@@ -1,0 +1,33 @@
+# Complexity Analysis
+
+n = number of items in the structure being used. All times are worst case.
+
+## Data structures
+| Operation | Structure | Time | Why |
+|---|---|---|---|
+| Add a reservation | LinkedList (tail pointer) | O(1) | New node attached at the tail; no traversal |
+| Cancel a reservation | LinkedList | O(n) | Must walk from the head to find the node |
+| Find / display reservations | LinkedList | O(n) | One pass over the nodes |
+| Join a waiting list | Queue | O(1) | Enqueue at the rear |
+| Serve next waiting student | Queue | O(1) | Dequeue from the front |
+| Count students waiting | Queue | O(1) | A size counter is kept |
+| Record a cancellation | Stack | O(1) | Push on top |
+| Undo last cancellation | Stack | O(1) to pop, plus O(1) to re-add | Pop from top; re-insert at the list tail |
+| Look up a resource by ID | vector | O(n) | Linear search (see below) |
+
+## Searching: linear search (`linearSearchIndex`, Algorithms.h)
+- Scans from the front until the predicate matches, so best case O(1), worst and average O(n). Extra space O(1).
+- Used for: resource by ID (vector), reservation by ID (linked list), reservations by student ID (linked list, full pass because a student can have several).
+- Why not binary search: the data is not kept sorted by ID, and the linked list does not allow jumping to the middle. With n around 20 the difference does not matter.
+
+## Sorting: merge sort (`mergeSort`, Algorithms.h)
+- Splits the vector in half, sorts each half recursively, then merges. Time O(n log n) in best, average and worst case. Extra space O(n) for the merge copies; recursion depth O(log n).
+- Stable: items that compare equal keep their original order (the merge takes the left item on ties). This is why "most requested" ties stay in resource-ID order.
+- Used for: resources by name/type, reservations by ID/student name/resource ID/date, and every report table (active reservations, utilization, most requested, waiting stats).
+- Reservation sorting works on a copy of the linked list (built in O(n)), so the list is unchanged and the total cost is O(n log n).
+- Why merge sort over quick sort: guaranteed O(n log n) with no bad pivot case, and it is stable.
+
+## Reports (ReportGenerator)
+- Active reservations: O(n) copy + O(n log n) sort.
+- Utilization: O(r log r) for r resources (map lookups add O(log r) each).
+- Most requested and waiting statistics: O(r log r).
